@@ -1,0 +1,29 @@
+# pagina inicial eh retirada do arquivo /tmp/pagina
+echo 'http://dl.dropbox.com/u/27356397/inicio.html' > /tmp/pagina
+
+# sites com acesso permitido (arquivo /tmp/sites com perm de root)
+echo "https://www.google.com/a/ccc.ufcg.edu.br/ServiceLogin?
+https://www.google.com/a/ccc.ufcg.edu.br/LoginAction2?
+https://www.google.com/accounts/
+https://www.google.com.br/accounts/
+https://ssl.gstatic.com/
+https://gg.google.com/
+https://accounts.google.com/
+https://appengine.google.com/_ah/
+https://accounts.google.com.br/
+http://dl.dropbox.com/u/9427789/2012.2/l1.html
+http://dl.dropbox.com/u/27356397/inicio.html
+http://python-webshell.appspot.com/
+https://python-webshell.appspot.com/
+http://bit.ly/prog1roteiro1
+https://docs.google.com/document/pub?id=1ytu7npkv6CGybqPA7Av0cTlkf5jUaUbDcmvhv_6vXks
+https://docs.google.com/document/pubimage?id=1ytu7npkv6CGybqPA7Av0cTlkf5jUaUbDcmvhv_6vXks
+http://bit.ly/prog1roteiro2
+https://docs.google.com/document/pub?id=1YN6jReWZvvmy6uUnJeOqGx1qJnYhox3fFfYRaI5rmto
+https://docs.google.com/document/pubimage?id=1YN6jReWZvvmy6uUnJeOqGx1qJnYhox3fFfYRaI5rmto" > /tmp/sites
+
+# configurando o gnome para usar o mitmproxy
+su aluno -c 'DISPLAY=:0 dconf write /org/gnome/desktop/lockdown/disable-lock-screen true'
+su aluno -c 'DISPLAY=:0 dconf write /org/gnome/desktop/lockdown/disable-user-switching true'
+su aluno -c 'DISPLAY=:0 dconf write /system/proxy/http/host \"localhost\"'
+su aluno -c 'DISPLAY=:0 dconf write /system/proxy/mode \"manual\"'

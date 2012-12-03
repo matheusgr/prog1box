@@ -1,0 +1,17 @@
+application: prog1box
+version: 1
+runtime: python27
+threadsafe: no
+api_version: 1
+
+handlers:
+- url: /admin.css
+  static_files: admin.css
+  upload: admin.css
+
+- url: '/admin.*'
+  login: admin
+  script: main.app
+
+- url: .*
+  script: main.app
