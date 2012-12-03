@@ -9,8 +9,12 @@ handlers:
   static_files: admin.css
   upload: admin.css
 
-- url: '/admin.*'
+- url: '/admin/user.*'
   login: admin
+  script: main.app
+
+- url: '/admin.*'
+  login: required
   script: main.app
 
 - url: .*
