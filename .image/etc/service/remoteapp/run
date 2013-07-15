@@ -1,0 +1,3 @@
+#!/bin/sh
+cd /tmp
+python /root/client.py

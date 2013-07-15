@@ -1,0 +1,133 @@
+#!/usr/bin/python
+
+# Copyright (C) 2010  Aldo Cortesi
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import sys
+import time
+import os
+from threading import Thread
+from libmproxy import proxy, cmdline, flow, controller
+from libmproxy.version import VERSION
+from optparse import OptionParser, OptionGroup
+
+def str_request(req):
+    if req.client_conn:
+        c = req.client_conn.address[0]
+    else:
+        c = "[replay]"
+    r = "%s %s %s"%(c, req.method, req.get_url())
+    print r
+    if req.stickycookie:
+        r = "[stickycookie] " + r
+    return r
+
+accessibles = []
+#	'https://www.google.com/a/ccc.ufcg.edu.br/ServiceLogin?',
+#	'https://www.google.com/a/ccc.ufcg.edu.br/LoginAction2?',
+#	'https://www.google.com/accounts/',
+#	'https://www.google.com.br/accounts/',
+#	'https://ssl.gstatic.com/',
+#	'https://accounts.google.com/',
+#	'https://accounts.google.com.br/'
+#]
+
+def read_sites_file():
+    while True:
+        try:
+            assert os.stat('/tmp/sites').st_uid == 0
+            r_sites = [ x.strip() for x in open('/tmp/sites').readlines()]
+            if r_sites != accessibles:
+                del accessibles[:]
+                accessibles.extend(r_sites)
+        except:
+            pass
+        time.sleep(5)
+
+Thread(target=read_sites_file).start()
+
+
+class MyFlowMaster(flow.FlowMaster):
+    def handle_request(self, r):
+        f = flow.FlowMaster.handle_request(self, r)
+        if f:
+            r._ack()
+        return f
+
+    def handle_response(self, msg):
+        f = flow.FlowMaster.handle_response(self, msg)
+        if f:
+            r = f.request
+            url = r.get_url()
+            valid = False
+            for a in accessibles:
+            	if url.startswith(a):
+                    valid = True
+                    break
+            if not valid:
+                msg._ack(None)
+                return
+            msg._ack()
+        return f
+
+    def handle_error(self, msg):
+        f = flow.FlowMaster.handle_error(self, msg)
+        return f
+
+
+class MyState(flow.State):
+
+    def add_request(self, req):
+        return flow.State.add_request(self,req)
+
+    def add_response(self, resp):
+        return flow.State.add_response(self,resp)
+
+if __name__ == '__main__':
+    parser = OptionParser(
+                usage = "%prog [options]",
+                version="%%prog %s"%VERSION,
+            )
+    cmdline.common_options(parser)
+    parser.add_option("--debug", dest="debug", default=False, action="store_true")
+
+
+    group = OptionGroup(
+                        parser,
+                        "Filters",
+                        "See help in mitmproxy for filter expression syntax."
+                    )
+    group.add_option(
+        "-i", "--intercept", action="store",
+        type = "str", dest="intercept", default=None,
+        help = "Intercept filter expression."
+    )
+    parser.add_option_group(group)
+    options, args = parser.parse_args()
+
+    config = proxy.process_proxy_options(parser, options)
+
+    if options.no_server:
+        server = None
+    else:
+        try:
+            server = proxy.ProxyServer(config, options.port, options.addr)
+        except proxy.ProxyServerError, v:
+            print >> sys.stderr, "mitmproxy:", v.args[0]
+            sys.exit(1)
+
+    mystate = MyState()
+    f_master = MyFlowMaster(server, mystate)
+    f_master.run()
