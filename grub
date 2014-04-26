@@ -1,0 +1,1 @@
+Grub: /boot/labp1/live/vmlinuz boot=live live-media-path=/boot/labp1/live config quiet splash locales=pt_BR.UTF-8 quickreboot keyboard-layout=br keyboard-model=br username=aluno hostname=labp1 noroot nottyautologin noeject timezone=America/Recife
