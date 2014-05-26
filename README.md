@@ -23,6 +23,8 @@ Also, additional files must be added to the image. Those files are at *image_chr
 
 After change those files, running **lb binary** will recreate your image.
 
+You may need to copy isolinux files to live-image\_config/bootloaders/ to make the image bootable.
+
 Google App Engine
 =================
 
