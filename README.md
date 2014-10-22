@@ -37,3 +37,4 @@ You also have access to files that may help you to deploy your application:
 
    * *others/grub* - Grub file to boot a squashfs (copy *live-default/binary/live* to */boot/labp1/live*)
    * *script.sh* - An example of script to be used at Prog1Box server
+   * *compile.sh* - Script to do an iso after any change on chroot
