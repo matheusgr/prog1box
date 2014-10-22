@@ -11,11 +11,11 @@ handlers:
 
 - url: '/admin/user.*'
   login: admin
-  script: main.app
+  script: admin.app
 
 - url: '/admin.*'
   login: required
-  script: main.app
+  script: admin.app
 
 - url: .*
   script: main.app
