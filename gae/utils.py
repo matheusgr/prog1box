@@ -6,7 +6,7 @@ from model import AllowedUser
 def deny_access(response):
     if not users.is_current_user_admin():
         user = users.get_current_user()
-        allowed_user = AllowedUser.all().filter('email =', user.email()).get()
+        allowed_user = AllowedUser.query(AllowedUser.email == user.email()).get()
         if not allowed_user:
             response.set_status(403)
             response.out.write("You should have permission to access this page")

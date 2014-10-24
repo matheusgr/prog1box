@@ -7,7 +7,7 @@ from google.appengine.api import memcache
 from google.appengine.api import users
 import jinja2
 
-from model import ExecScript
+import model
 from utils import deny_access
 
 
@@ -25,12 +25,7 @@ class Exec(webapp2.RequestHandler):
         machine_ip = self.request.remote_addr
         machines_dict[machine_ip] = (datetime.datetime.now(), last_exec)
         memcache.set('machines', machines_dict)
-        data = memcache.get('execdefault')
-        if data is not None:
-            script = data
-        else:
-            script = ExecScript.all().filter('name =', 'default').get().code
-            memcache.set('execdefault', script)
+        script = model.get_default_script(machine_ip)
         self.response.headers['Content-Type'] = 'text/plain'
         self.response.out.write(script)
 

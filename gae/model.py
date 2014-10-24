@@ -1,17 +1,22 @@
 #coding: utf-8
-from google.appengine.ext import db
+from google.appengine.ext import ndb
 
 
-class ExecScript(db.Model):
-    code = db.TextProperty(required=True)
-    name = db.StringProperty(required=True)
+def get_default_script(addr):
+    return ExecScript.query(ExecScript.name == 'default').get().code
 
 
-class Network(db.Model):
-    name = db.StringProperty(required=True)
-    addr = db.StringProperty(required=True)
+class ExecScript(ndb.Model):
+    code = ndb.TextProperty(required=True)
+    name = ndb.StringProperty(required=True)
 
 
-class AllowedUser(db.Model):
-    email = db.StringProperty(required=True)
-    network = db.ReferenceProperty(reference_class=Network)
+class Network(ndb.Model):
+    name = ndb.StringProperty(required=True)
+    addr = ndb.StringProperty(required=True)
+    mask = ndb.StringProperty(required=True)
+
+
+class AllowedUser(ndb.Model):
+    email = ndb.StringProperty(required=True)
+    network = ndb.KeyProperty(kind=Network)

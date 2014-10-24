@@ -4,7 +4,7 @@ from google.appengine.api import memcache
 from google.appengine.ext import db
 from google.appengine.ext.webapp import template
 
-from model import ExecScript, AllowedUser
+from model import ExecScript
 from utils import deny_access
 
 DEBUG = False
@@ -15,7 +15,7 @@ class Admin(webapp2.RequestHandler):
     def get(self):
         if deny_access(self.response):
             return
-        scripts = ExecScript.all()
+        scripts = ExecScript.query()
         template_values = {
             'scripts': scripts,
         }
