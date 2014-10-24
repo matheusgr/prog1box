@@ -8,28 +8,29 @@
 
 <body>
     <h1>Users</h1>
-
+    Users
     <div id="#execscripts">
         {% for user in users %} 
         <form action="/admin/useredit" method="POST">
             <input type="submit" value="Delete">
-            {{ user.email }}
-            <input type="hidden" name="key" value="{{ user.key }}">
+            {{ user.email }} -- {{ user.network.get.name }}
+            <input type="hidden" name="key" value="{{ user.key.urlsafe }}">
         </form>
         {% endfor %}
         <br>
         <form action="/admin/usernew" method="POST">
             <input type="text" name="email" size="60" value="">
+            <input type="text" name="network" size="60" value="">
             <input type="submit" value="Add">
         </form>
     </div>
-    
+    Network
 	<div id="#networks">
         {% for network in networks %} 
         <form action="/admin/networkedit" method="POST">
             <input type="submit" value="Delete">
             {{ network.name }} -- {{ network.addr }}
-            <input type="hidden" name="key" value="{{ network.key }}">
+            <input type="hidden" name="key" value="{{ network.key.urlsafe }}">
         </form>
         {% endfor %}
         <br>

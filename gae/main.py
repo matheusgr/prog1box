@@ -8,6 +8,7 @@ from google.appengine.api import memcache
 from google.appengine.api import users
 import jinja2
 
+import netaddr
 import model
 from utils import deny_access
 
@@ -58,10 +59,20 @@ class Index(webapp2.RequestHandler):
 
         machines = memcache.get('machines') or OrderedDict()
         remove_set = set()
+        result = OrderedDict()
+        networks = []
+
+        for network in model.get_user_networks(user.email()):
+            networks.append(netaddr.IPNetwork(network.addr))
 
         for ip, machine in machines.items():
             if machine.last_datetime < datetime.timedelta(minutes=-3) + datetime.datetime.now():
                 remove_set.add(ip)
+            else:
+                for network in networks:
+                    if netaddr.IPAddress(ip) in network:
+                        result[ip] = machine
+                        break
 
         for ip in remove_set:
             machines.pop(ip)
@@ -69,7 +80,7 @@ class Index(webapp2.RequestHandler):
         memcache.set('machines', machines)
 
         template_values = {'is_admin': users.is_current_user_admin(), 'email': user.email(),
-                           'logout': users.create_logout_url('/'), 'machines': machines}
+                           'logout': users.create_logout_url('/'), 'machines': result}
         template = jinja_environment.get_template('dashboard.html')
         self.response.out.write(template.render(template_values))
 
