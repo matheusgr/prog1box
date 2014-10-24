@@ -30,7 +30,7 @@ class AdminExecNew(webapp2.RequestHandler):
         code = '\n'.join(self.request.get('code').splitlines())
         name = self.request.get('name')
         ExecScript(code=code, name=name).put()
-        self.redirect('/admin')
+        self.redirect('/u/overview')
 
 
 class AdminExecEdit(webapp2.RequestHandler):
@@ -46,7 +46,7 @@ class AdminExecEdit(webapp2.RequestHandler):
         script.put()
         if name == 'default':
             memcache.set('execdefault', code)
-        self.redirect('/admin')
+        self.redirect('/u/overview')
 
 
 app = webapp2.WSGIApplication([

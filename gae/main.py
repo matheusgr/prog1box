@@ -1,6 +1,7 @@
 #coding: utf-8
 import datetime
 import os
+from collections import OrderedDict
 
 import webapp2
 from google.appengine.api import memcache
@@ -18,12 +19,21 @@ jinja_environment = jinja2.Environment(autoescape=True,
                                            os.path.join(os.path.dirname(__file__), 'bootstrap')))
 
 
+class Machine:
+    def __init__(self, last_datetime, last_output):
+        self.last_datetime = last_datetime
+        self.last_output = last_output
+
+    def __cmp__(self, other):
+        return cmp(self.ip, other.ip)
+
+
 class Exec(webapp2.RequestHandler):
     def get(self):
-        machines_dict = memcache.get('machines') or {}
+        machines_dict = memcache.get('machines') or OrderedDict()
         last_exec = self.request.get('last', default_value='-1')
         machine_ip = self.request.remote_addr
-        machines_dict[machine_ip] = (datetime.datetime.now(), last_exec)
+        machines_dict[machine_ip] = Machine(datetime.datetime.now(), last_exec)
         memcache.set('machines', machines_dict)
         script = model.get_default_script(machine_ip)
         self.response.headers['Content-Type'] = 'text/plain'
@@ -33,34 +43,35 @@ class Exec(webapp2.RequestHandler):
 class Index(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
+
         if not user:
             template_values = {'login': users.create_login_url()}
             template = jinja_environment.get_template('index.html')
             self.response.out.write(template.render(template_values))
             return
-        else:
-            if deny_access(self.response):
-                self.response.out.write("<br><br>User %s - <a href=%s>Logout</a><br>" %
-                                        (user.email(), users.create_logout_url('/')))
-                return
-            self.response.out.write("User %s - <a href=%s>Logout</a><br>" % (user.email(),
-                                                                             users.create_logout_url('/')))
-            self.response.out.write("<a href=/u/overview>Edit exec script</a><br>")
-            self.response.out.write("<a href=/admin/user>Edit allowed users</a><br><br>")
-        machines_dict = memcache.get('machines')
-        if not machines_dict:
-            self.response.out.write('None')
-            return
-        machines = machines_dict.items()
-        machines.sort(key=lambda x: x[0])
-        for machine in machines:
-            if machine[1][0] < datetime.timedelta(minutes=-3) + datetime.datetime.now():
-                del machines_dict[machine[0]]
-            else:
-                self.response.out.write('%s : %s : %s<br>' % (machine[0], machine[1][0], machine[1][1]))
-        self.response.out.write('---')
-        memcache.set('machines', machines_dict)
 
+        if deny_access(self.response):
+            self.response.set_status(403)
+            self.response.out.write("<br><br>User %s - <a href=%s>Logout</a><br>" %
+                                    (user.email(), users.create_logout_url('/')))
+            return
+
+        machines = memcache.get('machines') or OrderedDict()
+        remove_set = set()
+
+        for ip, machine in machines.items():
+            if machine.last_datetime < datetime.timedelta(minutes=-3) + datetime.datetime.now():
+                remove_set.add(ip)
+
+        for ip in remove_set:
+            machines.pop(ip)
+
+        memcache.set('machines', machines)
+
+        template_values = {'is_admin': users.is_current_user_admin(), 'email': user.email(),
+                           'logout': users.create_logout_url('/'), 'machines': machines}
+        template = jinja_environment.get_template('dashboard.html')
+        self.response.out.write(template.render(template_values))
 
 app = webapp2.WSGIApplication([
     ('/', Index),
