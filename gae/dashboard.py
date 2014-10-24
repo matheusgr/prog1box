@@ -1,16 +1,16 @@
 #coding: utf-8
 import webapp2
-from google.appengine.api import memcache
-from google.appengine.ext import db
+from google.appengine.api import memcache, users
+from google.appengine.ext import ndb
 from google.appengine.ext.webapp import template
 
-from model import ExecScript
+from model import ExecScript, Network, AllowedUser
 from utils import deny_access
 
 DEBUG = False
 
 
-class Admin(webapp2.RequestHandler):
+class Dashboard(webapp2.RequestHandler):
 
     def get(self):
         if deny_access(self.response):
@@ -23,24 +23,29 @@ class Admin(webapp2.RequestHandler):
         self.response.out.write(template.render(path, template_values))
 
 
-class AdminExecNew(webapp2.RequestHandler):
+class DashboardExecNew(webapp2.RequestHandler):
     def post(self):
         if deny_access(self.response):
             return
         code = '\n'.join(self.request.get('code').splitlines())
         name = self.request.get('name')
-        ExecScript(code=code, name=name).put()
-        self.redirect('/u/overview')
+        network_name = self.request.get('network')
+        network_key = Network.query(Network.name == network_name).get().key
+        if not deny_access(self.response, network_key):
+            ExecScript(code=code, name=name, network=network_key).put()
+            self.redirect('/u/overview')
+        else:
+            self.response.set_status(403)
 
 
-class AdminExecEdit(webapp2.RequestHandler):
+class DashboardExecEdit(webapp2.RequestHandler):
     def post(self):
         if deny_access(self.response):
             return
         name = self.request.get('name')
         code = '\n'.join(self.request.get('code').splitlines())
         key = self.request.get('key')
-        script = db.get(key)
+        script = ndb.Key(urlsafe=key).get()
         script.name = name
         script.code = code
         script.put()
@@ -50,7 +55,7 @@ class AdminExecEdit(webapp2.RequestHandler):
 
 
 app = webapp2.WSGIApplication([
-    ('/u/overview', Admin),
-    ('/u/execedit', AdminExecEdit),
-    ('/u/execnew', AdminExecNew),
+    ('/u/overview', Dashboard),
+    ('/u/execedit', DashboardExecEdit),
+    ('/u/execnew', DashboardExecNew),
 ], debug=DEBUG)

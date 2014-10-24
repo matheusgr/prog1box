@@ -69,10 +69,13 @@ class Index(webapp2.RequestHandler):
             if machine.last_datetime < datetime.timedelta(minutes=-3) + datetime.datetime.now():
                 remove_set.add(ip)
             else:
-                for network in networks:
-                    if netaddr.IPAddress(ip) in network:
-                        result[ip] = machine
-                        break
+                if users.is_current_user_admin():
+                    result[ip] = machine
+                else:
+                    for network in networks:
+                        if netaddr.IPAddress(ip) in network:
+                            result[ip] = machine
+                            break
 
         for ip in remove_set:
             machines.pop(ip)
