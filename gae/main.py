@@ -59,23 +59,22 @@ class Index(webapp2.RequestHandler):
 
         machines = memcache.get('machines') or OrderedDict()
         remove_set = set()
-        result = OrderedDict()
+        result = {}
+        networks_model = model.get_user_networks(user.email(), users.is_current_user_admin())
         networks = []
 
-        for network in model.get_user_networks(user.email()):
-            networks.append(netaddr.IPNetwork(network.addr))
+        for network in networks_model:
+            networks.append((network, netaddr.IPNetwork(network.addr)))
+            result[network.name] = OrderedDict()
 
         for ip, machine in machines.items():
             if machine.last_datetime < datetime.timedelta(minutes=-3) + datetime.datetime.now():
                 remove_set.add(ip)
             else:
-                if users.is_current_user_admin():
-                    result[ip] = machine
-                else:
-                    for network in networks:
-                        if netaddr.IPAddress(ip) in network:
-                            result[ip] = machine
-                            break
+                for network, netaddr_network in networks:
+                    if netaddr.IPAddress(ip) in netaddr_network:
+                        result.get(network.name, OrderedDict())[ip] = machine
+                        break
 
         for ip in remove_set:
             machines.pop(ip)
@@ -83,7 +82,7 @@ class Index(webapp2.RequestHandler):
         memcache.set('machines', machines)
 
         template_values = {'is_admin': users.is_current_user_admin(), 'email': user.email(),
-                           'logout': users.create_logout_url('/'), 'machines': result}
+                           'logout': users.create_logout_url('/'), 'machines': result, 'networks': networks_model}
         template = jinja_environment.get_template('dashboard.html')
         self.response.out.write(template.render(template_values))
 

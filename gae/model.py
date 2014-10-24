@@ -11,7 +11,9 @@ def get_default_script(addr):
                 return ExecScript.query(ExecScript.name == 'default').get().code
 
 
-def get_user_networks(email):
+def get_user_networks(email, is_admin=False):
+    if is_admin:
+        return [result.network.get() for result in AllowedUser.query()]
     return [result.network.get() for result in AllowedUser.query(AllowedUser.email == email)]
 
 
