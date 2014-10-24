@@ -4,18 +4,31 @@ runtime: python27
 threadsafe: no
 api_version: 1
 
+libraries:
+- name: jinja2
+  version: latest
+
 handlers:
+- url: /css
+  static_dir: bootstrap/css
+
+- url: /js
+  static_dir: bootstrap/js
+
+- url: /assets
+  static_dir: bootstrap/assets
+
 - url: /admin.css
   static_files: admin.css
   upload: admin.css
 
-- url: '/admin/user.*'
+- url: '/admin/.*'
   login: admin
   script: admin.app
 
-- url: '/admin.*'
+- url: '/u/.*'
   login: required
-  script: admin.app
+  script: dashboard.app
 
 - url: .*
   script: main.app

@@ -1,15 +1,20 @@
 #coding: utf-8
-
 import datetime
+import os
 
 import webapp2
 from google.appengine.api import memcache
 from google.appengine.api import users
+import jinja2
 
 from model import ExecScript
 from utils import deny_access
 
+
 DEBUG = False
+
+jinja_environment = jinja2.Environment(autoescape=True,
+                                       loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), 'bootstrap')))
 
 
 class Exec(webapp2.RequestHandler):
@@ -33,14 +38,16 @@ class Index(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
         if not user:
-            self.response.out.write("<a href=%s>Login</a><br><br>" % users.create_login_url())
+            template_values = {'login': users.create_login_url()}
+            template = jinja_environment.get_template('index.html')
+            self.response.out.write(template.render(template_values))
             return
         else:
             if deny_access(self.response):
                 self.response.out.write("<br><br>User %s - <a href=%s>Logout</a><br>" % (user.email(), users.create_logout_url('/')))
                 return
             self.response.out.write("User %s - <a href=%s>Logout</a><br>" % (user.email(), users.create_logout_url('/')))
-            self.response.out.write("<a href=/admin>Edit exec script</a><br>")
+            self.response.out.write("<a href=/u/overview>Edit exec script</a><br>")
             self.response.out.write("<a href=/admin/user>Edit allowed users</a><br><br>")
         machines_dict = memcache.get('machines')
         if not machines_dict:

@@ -7,35 +7,7 @@ from google.appengine.ext.webapp import template
 from model import ExecScript, AllowedUser
 from utils import deny_access
 
-
 DEBUG = False
-
-
-class AdminUser(webapp2.RequestHandler):
-
-    def get(self):
-        allowed_users = AllowedUser.all().order('email')
-        template_values = {
-            'users': allowed_users,
-        }
-        path = 'admin.html'
-        self.response.out.write(template.render(path, template_values))
-
-
-class AdminUserNew(webapp2.RequestHandler):
-
-    def post(self):
-        email = self.request.get('email')
-        AllowedUser(email=email).put()
-        self.redirect('/admin/user')
-
-
-class AdminUserEdit(webapp2.RequestHandler):
-
-    def post(self):
-        key = self.request.get('key')
-        db.delete(key)
-        self.redirect('/admin/user')
 
 
 class Admin(webapp2.RequestHandler):
@@ -47,7 +19,7 @@ class Admin(webapp2.RequestHandler):
         template_values = {
             'scripts': scripts,
         }
-        path = 'admin.html'
+        path = 'dashboard.html'
         self.response.out.write(template.render(path, template_values))
 
 
@@ -81,7 +53,4 @@ app = webapp2.WSGIApplication([
     ('/u/overview', Admin),
     ('/u/execedit', AdminExecEdit),
     ('/u/execnew', AdminExecNew),
-    ('/admin/user', AdminUser),
-    ('/admin/useredit', AdminUserEdit),
-    ('/admin/usernew', AdminUserNew),
 ], debug=DEBUG)
