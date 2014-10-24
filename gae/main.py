@@ -14,7 +14,8 @@ from utils import deny_access
 DEBUG = False
 
 jinja_environment = jinja2.Environment(autoescape=True,
-                                       loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), 'bootstrap')))
+                                       loader=jinja2.FileSystemLoader(
+                                           os.path.join(os.path.dirname(__file__), 'bootstrap')))
 
 
 class Exec(webapp2.RequestHandler):
@@ -44,9 +45,11 @@ class Index(webapp2.RequestHandler):
             return
         else:
             if deny_access(self.response):
-                self.response.out.write("<br><br>User %s - <a href=%s>Logout</a><br>" % (user.email(), users.create_logout_url('/')))
+                self.response.out.write("<br><br>User %s - <a href=%s>Logout</a><br>" %
+                                        (user.email(), users.create_logout_url('/')))
                 return
-            self.response.out.write("User %s - <a href=%s>Logout</a><br>" % (user.email(), users.create_logout_url('/')))
+            self.response.out.write("User %s - <a href=%s>Logout</a><br>" % (user.email(),
+                                                                             users.create_logout_url('/')))
             self.response.out.write("<a href=/u/overview>Edit exec script</a><br>")
             self.response.out.write("<a href=/admin/user>Edit allowed users</a><br><br>")
         machines_dict = memcache.get('machines')
