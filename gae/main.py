@@ -60,6 +60,7 @@ class Index(webapp2.RequestHandler):
         machines = memcache.get('machines') or OrderedDict()
         remove_set = set()
         result = {}
+        total_users_machines = 0
         networks_model = model.get_user_networks(user.email(), users.is_current_user_admin())
         networks = []
 
@@ -74,6 +75,7 @@ class Index(webapp2.RequestHandler):
                 for network, netaddr_network in networks:
                     if netaddr.IPAddress(ip) in netaddr_network:
                         result.get(network.name, OrderedDict())[ip] = machine
+                        total_users_machines += 1
                         break
 
         for ip in remove_set:
@@ -81,8 +83,13 @@ class Index(webapp2.RequestHandler):
 
         memcache.set('machines', machines)
 
-        template_values = {'is_admin': users.is_current_user_admin(), 'email': user.email(),
-                           'logout': users.create_logout_url('/'), 'machines': result, 'networks': networks_model}
+        template_values = {'is_admin': users.is_current_user_admin(),
+                           'nick': user.nickname(),
+                           'email': user.email(),
+                           'total_users_machines': total_users_machines,
+                           'logout': users.create_logout_url('/'),
+                           'machines': result,
+                           'networks': networks_model}
         template = jinja_environment.get_template('dashboard.html')
         self.response.out.write(template.render(template_values))
 

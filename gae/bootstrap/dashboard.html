@@ -26,6 +26,11 @@
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
           <h1 class="page-header"><div id="overview">Dashboard</div></h1>
           <div class="row">
+            <p>Welcome {{ nick }}.</p>
+             <ul>
+                <li>{{total_users_machines}} machine(s) contacted in the last 3 minutes.
+                <li>{{networks|length}} networks being managed by this user.
+              </ul>
             <a href=/u/overview>Edit exec script</a><br>
           </div>
 		  {% for network in networks %}
