@@ -10,30 +10,16 @@ from utils import deny_access
 DEBUG = False
 
 
-class Dashboard(webapp2.RequestHandler):
-
-    def get(self):
-        if deny_access(self.response):
-            return
-        scripts = ExecScript.query()
-        template_values = {
-            'scripts': scripts,
-        }
-        path = 'dashboard.html'
-        self.response.out.write(template.render(path, template_values))
-
-
 class DashboardExecNew(webapp2.RequestHandler):
     def post(self):
         if deny_access(self.response):
             return
         code = '\n'.join(self.request.get('code').splitlines())
         name = self.request.get('name')
-        network_name = self.request.get('network')
-        network_key = Network.query(Network.name == network_name).get().key
+        network_key = ndb.Key(urlsafe=self.request.get('network'))
         if not deny_access(self.response, network_key):
             ExecScript(code=code, name=name, network=network_key).put()
-            self.redirect('/u/overview')
+            self.redirect('/')  # TODO AJAX
         else:
             self.response.set_status(403)
 
@@ -51,11 +37,10 @@ class DashboardExecEdit(webapp2.RequestHandler):
         script.put()
         if name == 'default':
             memcache.set('execdefault', code)
-        self.redirect('/u/overview')
+        self.redirect('/')  # TODO AJAX
 
 
 app = webapp2.WSGIApplication([
-    ('/u/overview', Dashboard),
     ('/u/execedit', DashboardExecEdit),
     ('/u/execnew', DashboardExecNew),
 ], debug=DEBUG)
