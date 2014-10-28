@@ -38,31 +38,6 @@
             <h2 class="sub-header">
                 <div id="{{network.name|replace(' ', '_')}}">{{network.name}}</a>
             </h2>
-            {# Scripts #}
-            <h3>Scripts</h3>
-
-            <div id="#execscripts">
-                {% for script in scripts[network.key] %}
-                <form action="/u/execedit" method="POST">
-                    <p>Name: <input type="text" name="name" value="{{ script.name }}"></p>
-
-                    <p>Content: <textarea name="code" cols=100 rows=20>{{ script.code }}</textarea></p>
-                    <input type="hidden" name="key" value="{{ script.key.urlsafe() }}">
-                    <br>
-                    <input type="submit" value="Save">
-                </form>
-                <br>
-                {% endfor %}
-
-                <h2> New Script </h2>
-
-                <form action="/u/execnew" method="POST">
-                    <input type="text" name="name" size="45" value=""><br>
-                    <input type="hidden" name="network" size="45" value="{{network.key.urlsafe()}}"><br>
-                    <textarea name="code" cols=100 rows=20></textarea><br>
-                    <input type="submit" value="Create">
-                </form>
-            </div>
             <h3>Machines</h3>
             {% if network.name in machines %}
             <div class="table-responsive">
@@ -88,6 +63,55 @@
             {% else %}
             <p>No machines contacted.</p>
             {% endif %}
+            <h3>Scripts</h3>
+            <div id="#execscripts">
+                <div class="panel-group" id="accordion">
+                    {% for script in scripts[network.key]|sort(attribute='name') %}
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{loop.index}}">
+                                    {{ script.name }}
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapse{{loop.index}}" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <form action="/u/execedit" method="POST">
+                                    <p>Name: <input type="text" name="name" value="{{ script.name }}"></p>
+                                    <p>Content: <textarea name="code" cols=100 rows=20>{{ script.code }}</textarea></p>
+                                    <input type="hidden" name="key" value="{{ script.key.urlsafe() }}">
+                                    <br>
+                                    <input type="submit" value="Save">
+                                </form>
+                                <br>
+                             </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseCreate">
+                                    Create new script...
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseCreate" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <form action="/u/execnew" method="POST">
+                                    <p>Name: <input type="text" name="name" size="45" value=""></p>
+                                    <p>Content:<textarea name="code" cols=100 rows=20></textarea></p>
+                                    <input type="hidden" name="network" size="45" value="{{network.key.urlsafe()}}">
+                                    <br>
+                                    <input type="submit" value="Create">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {% endfor %}
         </div>
     </div>
