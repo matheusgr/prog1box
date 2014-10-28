@@ -11,11 +11,13 @@ def get_exec_scripts(networks):
     return result
 
 
-def get_default_script(addr):
+def get_default_script(addr):  # TODO cache
     addr_ = netaddr.IPAddress(addr)
+    result = ""
     for network in Network.query():
             if addr_ in network.netaddr:
-                return ExecScript.query(ExecScript.name == 'default').get().code
+                result += '\n'.join([x.code for x in ExecScript.query(ExecScript.network == network.key)])
+    return result
 
 
 def get_user_networks(email, is_admin=False):
