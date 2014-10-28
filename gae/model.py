@@ -7,7 +7,7 @@ import netaddr
 def get_default_script(addr):
     addr_ = netaddr.IPAddress(addr)
     for network in Network.query():
-            if addr_ in netaddr.IPNetwork(network.addr):
+            if addr_ in network.netaddr:
                 return ExecScript.query(ExecScript.name == 'default').get().code
 
 
@@ -20,6 +20,10 @@ def get_user_networks(email, is_admin=False):
 class Network(ndb.Model):
     name = ndb.StringProperty(required=True)
     addr = ndb.StringProperty(required=True)
+
+    def __getattr__(self, attr):
+        if attr == 'netaddr':
+            return netaddr.IPNetwork(self.addr)
 
 
 class ExecScript(ndb.Model):

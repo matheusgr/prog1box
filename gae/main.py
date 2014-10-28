@@ -42,6 +42,31 @@ class Exec(webapp2.RequestHandler):
 
 
 class Index(webapp2.RequestHandler):
+
+    @staticmethod
+    def _get_user_machines(user_email):
+
+        machines = memcache.get('machines') or OrderedDict()
+        result = {}
+        total_users_machines = 0
+        networks_model = model.get_user_networks(user_email, users.is_current_user_admin())
+
+        for ip, machine in list(machines.items()):
+            if machine.last_datetime < datetime.timedelta(minutes=-3) + datetime.datetime.now():
+                machines.pop(ip)
+            else:
+                for network in networks_model:
+                    if netaddr.IPAddress(ip) in network.netaddr:
+                        result_dict = result.get(network.name, OrderedDict())
+                        result_dict[ip] = machine
+                        result[network.name] = result_dict
+                        total_users_machines += 1
+                        break
+
+        memcache.set('machines', machines)
+
+        return networks_model, result, total_users_machines
+
     def get(self):
         user = users.get_current_user()
 
@@ -57,31 +82,7 @@ class Index(webapp2.RequestHandler):
                                     (user.email(), users.create_logout_url('/')))
             return
 
-        machines = memcache.get('machines') or OrderedDict()
-        remove_set = set()
-        result = {}
-        total_users_machines = 0
-        networks_model = model.get_user_networks(user.email(), users.is_current_user_admin())
-        networks = []
-
-        for network in networks_model:
-            networks.append((network, netaddr.IPNetwork(network.addr)))
-            result[network.name] = OrderedDict()
-
-        for ip, machine in machines.items():
-            if machine.last_datetime < datetime.timedelta(minutes=-3) + datetime.datetime.now():
-                remove_set.add(ip)
-            else:
-                for network, netaddr_network in networks:
-                    if netaddr.IPAddress(ip) in netaddr_network:
-                        result.get(network.name, OrderedDict())[ip] = machine
-                        total_users_machines += 1
-                        break
-
-        for ip in remove_set:
-            machines.pop(ip)
-
-        memcache.set('machines', machines)
+        networks_model, result, total_users_machines = self._get_user_machines(user.email())
 
         template_values = {'is_admin': users.is_current_user_admin(),
                            'nick': user.nickname(),
