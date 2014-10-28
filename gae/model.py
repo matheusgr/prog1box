@@ -4,6 +4,13 @@ from google.appengine.ext import ndb
 import netaddr
 
 
+def get_exec_scripts(networks):
+    result = {}
+    for network in networks:
+        result[network.key] = [x for x in ExecScript.query(ExecScript.network == network.key)]
+    return result
+
+
 def get_default_script(addr):
     addr_ = netaddr.IPAddress(addr)
     for network in Network.query():
