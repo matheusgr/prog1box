@@ -11,43 +11,51 @@
 <li><a href="{{logout}}">Logout</a></li>
 {% endblock %}
 {% block container %}
-    <div class="container-fluid">
-      <div class="row">
+<div class="container-fluid">
+    <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
-          <div class="navbar-example">
-              <ul class="nav nav-sidebar">
-                <li class="active"><a href="#overview">Overview</a></li>
-                {% for network in networks %}
+            <div class="navbar-example">
+                <ul class="nav nav-sidebar">
+                    <li class="active"><a href="#overview">Overview</a></li>
+                    {% for network in networks %}
                     <li><a href="#{{network.name|replace(' ', '_')}}">{{network.name}}</a></li>
-                {% endfor %}
-              </ul>
-          </div>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header"><div id="overview">Overview</div></h1>
-          <div class="row">
-            <p>Welcome {{ nick }}.</p>
-             <ul>
-                <li>{{total_users_machines}} machine(s) contacted in the last 3 minutes.
-                <li>{{networks|length}} networks being managed by this user.
-              </ul>
-          </div>
-		  {% for network in networks %}
-          <h2 class="sub-header"><div id="{{network.name|replace(' ', '_')}}">{{network.name}}</a></h2>
+            <h1 class="page-header">
+                <div id="overview">Overview</div>
+            </h1>
+            <div class="row">
+                <p>Welcome {{ nick }}.</p>
+                <ul>
+                    <li>{{total_users_machines}} machine(s) contacted in the last 3 minutes.
+                    <li>{{networks|length}} networks being managed by this user.
+                </ul>
+            </div>
+            {% for network in networks %}
+            <h2 class="sub-header">
+                <div id="{{network.name|replace(' ', '_')}}">{{network.name}}</a>
+            </h2>
             {# Scripts #}
             <h3>Scripts</h3>
+
             <div id="#execscripts">
                 {% for script in scripts[network.key] %}
                 <form action="/u/execedit" method="POST">
                     <p>Name: <input type="text" name="name" value="{{ script.name }}"></p>
+
                     <p>Content: <textarea name="code" cols=100 rows=20>{{ script.code }}</textarea></p>
                     <input type="hidden" name="key" value="{{ script.key.urlsafe() }}">
                     <br>
                     <input type="submit" value="Save">
-                </form><br>
+                </form>
+                <br>
                 {% endfor %}
 
                 <h2> New Script </h2>
+
                 <form action="/u/execnew" method="POST">
                     <input type="text" name="name" size="45" value=""><br>
                     <input type="hidden" name="network" size="45" value="{{network.key.urlsafe()}}"><br>
@@ -55,34 +63,34 @@
                     <input type="submit" value="Create">
                 </form>
             </div>
-          <h3>Machines</h3>
-          {% if network.name in machines %}
-          <div class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>IP</th>
-                  <th>Last contact</th>
-                  <th>Last execution</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for ip, machine in machines.get(network.name).items() %}
-                <tr>
-                  <td>{{ip}}</td>
-                  <td>{{machine.last_datetime}}</td>
-                  <td>{{machine.last_output}}</td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-          {% else %}
+            <h3>Machines</h3>
+            {% if network.name in machines %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>IP</th>
+                        <th>Last contact</th>
+                        <th>Last execution</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for ip, machine in machines.get(network.name).items() %}
+                    <tr>
+                        <td>{{ip}}</td>
+                        <td>{{machine.last_datetime}}</td>
+                        <td>{{machine.last_output}}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
             <p>No machines contacted.</p>
-          {% endif %}
-		  {% endfor %}
+            {% endif %}
+            {% endfor %}
         </div>
-       </div>
-     </div>
+    </div>
+</div>
 {% endblock %}
 {% block scripts %}{% endblock %}

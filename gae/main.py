@@ -1,4 +1,3 @@
-#coding: utf-8
 import datetime
 import os
 from collections import OrderedDict
@@ -7,7 +6,6 @@ import webapp2
 from google.appengine.api import memcache
 from google.appengine.api import users
 import jinja2
-
 import netaddr
 import model
 from utils import deny_access
@@ -42,7 +40,6 @@ class Exec(webapp2.RequestHandler):
 
 
 class Index(webapp2.RequestHandler):
-
     @staticmethod
     def _get_user_machines(user_email):
 
@@ -95,7 +92,8 @@ class Index(webapp2.RequestHandler):
         template = jinja_environment.get_template('dashboard.html')
         self.response.out.write(template.render(template_values))
 
+
 app = webapp2.WSGIApplication([
-    ('/', Index),
-    ('/exec', Exec),
-], debug=DEBUG)
+                                  ('/', Index),
+                                  ('/exec', Exec),
+                              ], debug=DEBUG)

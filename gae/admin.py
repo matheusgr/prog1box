@@ -1,4 +1,3 @@
-#coding: utf-8
 import webapp2
 from google.appengine.ext import ndb
 from google.appengine.ext.webapp import template
@@ -10,7 +9,6 @@ DEBUG = False
 
 
 class AdminUser(webapp2.RequestHandler):
-
     def get(self):
         allowed_users = AllowedUser.query().order(AllowedUser.email)
         networks = Network.query().order(Network.name)
@@ -23,7 +21,6 @@ class AdminUser(webapp2.RequestHandler):
 
 
 class AdminUserNew(webapp2.RequestHandler):
-
     def post(self):
         email = self.request.get('email')
         network_name = self.request.get('network')
@@ -33,7 +30,6 @@ class AdminUserNew(webapp2.RequestHandler):
 
 
 class AdminUserEdit(webapp2.RequestHandler):
-
     def post(self):
         key = self.request.get('key')
         ndb.Key(urlsafe=key).delete()
@@ -41,7 +37,6 @@ class AdminUserEdit(webapp2.RequestHandler):
 
 
 class AdminNetworkNew(webapp2.RequestHandler):
-
     def post(self):
         name = self.request.get('name')
         addr = self.request.get('addr')
@@ -50,16 +45,16 @@ class AdminNetworkNew(webapp2.RequestHandler):
 
 
 class AdminNetworkEdit(webapp2.RequestHandler):
-
     def post(self):
         key = self.request.get('key')
         ndb.Key(urlsafe=key).delete()
         self.redirect('/admin/user')
 
+
 app = webapp2.WSGIApplication([
-    ('/admin/user', AdminUser),
-    ('/admin/useredit', AdminUserEdit),
-    ('/admin/usernew', AdminUserNew),
-    ('/admin/networkedit', AdminNetworkEdit),
-    ('/admin/networknew', AdminNetworkNew),
-], debug=DEBUG)
+                                  ('/admin/user', AdminUser),
+                                  ('/admin/useredit', AdminUserEdit),
+                                  ('/admin/usernew', AdminUserNew),
+                                  ('/admin/networkedit', AdminNetworkEdit),
+                                  ('/admin/networknew', AdminNetworkNew),
+                              ], debug=DEBUG)

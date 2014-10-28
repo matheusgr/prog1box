@@ -1,10 +1,6 @@
-#coding: utf-8
 import webapp2
-from google.appengine.api import memcache, users
 from google.appengine.ext import ndb
-from google.appengine.ext.webapp import template
 
-from model import ExecScript, Network, AllowedUser
 from utils import deny_access
 
 DEBUG = False
@@ -41,6 +37,6 @@ class DashboardExecEdit(webapp2.RequestHandler):
 
 
 app = webapp2.WSGIApplication([
-    ('/u/execedit', DashboardExecEdit),
-    ('/u/execnew', DashboardExecNew),
-], debug=DEBUG)
+                                  ('/u/execedit', DashboardExecEdit),
+                                  ('/u/execnew', DashboardExecNew),
+                              ], debug=DEBUG)

@@ -11,7 +11,7 @@ options(
         author="Matheus Gaudencio do Rego",
         author_email="matheusgr@gmail.com",
         install_requires=[],
-        #test_suite='nose.collector',
+        # test_suite='nose.collector',
         packages=['socialcoding'],
         url="http://www.splab.ufcg.edu.br/",
     ),
@@ -77,6 +77,7 @@ def html():
     builtdocs = path('docs') / options.sphinx.builddir / "html"
     destdir = path("docs") / "final"
     builtdocs.move(destdir)
+
 
 @task
 @needs(["clean"])

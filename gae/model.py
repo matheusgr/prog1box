@@ -1,4 +1,3 @@
-#coding: utf-8
 from google.appengine.ext import ndb
 
 import netaddr
@@ -15,8 +14,8 @@ def get_default_script(addr):  # TODO cache
     addr_ = netaddr.IPAddress(addr)
     result = ""
     for network in Network.query():
-            if addr_ in network.netaddr:
-                result += '\n'.join([x.code for x in ExecScript.query(ExecScript.network == network.key)])
+        if addr_ in network.netaddr:
+            result += '\n'.join([x.code for x in ExecScript.query(ExecScript.network == network.key)])
     return result
 
 
