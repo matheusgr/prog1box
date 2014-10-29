@@ -31,8 +31,6 @@ class DashboardExecEdit(webapp2.RequestHandler):
         script.name = name
         script.code = code
         script.put()
-        if name == 'default':
-            memcache.set('execdefault', code)
         self.redirect('/')  # TODO AJAX
 
 
