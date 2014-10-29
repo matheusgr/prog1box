@@ -1,5 +1,7 @@
 lb clean --binary
-unlink chroot/sbin/true
+# usually you want link start-stop-daemon to /bin/true before changing chroot
+unlink chroot/sbin/start-stop-daemon
 cp backup/start-stop-daemon chroot/sbin/
+# clean some space
 rm chroot/var/lib/apt/lists/ftp*
 lb binary iso
