@@ -21,4 +21,6 @@ sleep 2
 svscanboot &
 disown
 
+hwclock --hctosys
+
 exit 0
