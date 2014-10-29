@@ -10,6 +10,25 @@ def get_exec_scripts(networks):
     return result
 
 
+def get_remote_files(networks):
+    result = {}
+    for network in networks:
+        result[network.key] = [x for x in RemoteFile.query(RemoteFile.network == network.key)]
+    return result
+
+
+def get_default_files(addr):  # TODO cache
+    addr_ = netaddr.IPAddress(addr)
+    result = ""
+    for network in Network.query():
+        if addr_ in network.netaddr:
+            for remotefile in RemoteFile.query(RemoteFile.network == network.key):
+                result += '\necho "'
+                result += remotefile.content
+                result += '" >> "' + remotefile.path + '"'
+    return result
+
+
 def get_default_script(addr):  # TODO cache
     addr_ = netaddr.IPAddress(addr)
     result = ""
@@ -37,6 +56,12 @@ class Network(ndb.Model):
 class ExecScript(ndb.Model):
     code = ndb.TextProperty(required=True)
     name = ndb.StringProperty(required=True)
+    network = ndb.KeyProperty(required=True, kind=Network)
+
+
+class RemoteFile(ndb.Model):
+    content = ndb.TextProperty(required=True)
+    path = ndb.StringProperty(required=True)
     network = ndb.KeyProperty(required=True, kind=Network)
 
 

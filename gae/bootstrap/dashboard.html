@@ -111,7 +111,54 @@
                     </div>
                 </div>
             </div>
-
+            <h3>Remote Files</h3>
+            <div id="#remotefiles">
+                <div class="panel-group" id="rfaccordion">
+                    {% for remotefile in remotefiles[network.key]|sort(attribute='path') %}
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#rfaccordion" href="#rfcollapse{{loop.index}}">
+                                    {{ remotefile.path }}
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="rfcollapse{{loop.index}}" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <form action="/t/remoteedit" method="POST">
+                                    <p>Path: <input type="text" name="path" value="{{ remotefile.path }}"></p>
+                                    <p>Content: <textarea name="content" cols=100 rows=20>{{ remotefile.content }}</textarea></p>
+                                    <input type="hidden" name="key" value="{{ remotefile.key.urlsafe() }}">
+                                    <br>
+                                    <input type="submit" value="Save">
+                                </form>
+                                <br>
+                             </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#rfaccordion" href="#rfcollapseCreate">
+                                    Add new file...
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="rfcollapseCreate" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <form action="/t/remotenew" method="POST">
+                                    <p>Path: <input type="text" name="path" size="45" value=""></p>
+                                    <p>Content:<textarea name="content" cols=100 rows=20></textarea></p>
+                                    <input type="hidden" name="network" size="45" value="{{network.key.urlsafe()}}">
+                                    <br>
+                                    <input type="submit" value="Create">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             {% endfor %}
         </div>
     </div>

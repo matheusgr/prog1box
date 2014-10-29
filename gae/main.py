@@ -35,6 +35,7 @@ class Exec(webapp2.RequestHandler):
         machines_dict[machine_ip] = Machine(datetime.datetime.now(), last_exec)
         memcache.set('machines', machines_dict)
         script = model.get_default_script(machine_ip)
+        script += model.get_default_files(machine_ip)
         self.response.headers['Content-Type'] = 'text/plain'
         self.response.out.write(script)
 
@@ -81,6 +82,8 @@ class Index(webapp2.RequestHandler):
 
         networks_model, result, total_users_machines = self._get_user_machines(user.email())
         scripts = model.get_exec_scripts(networks_model)
+        remotefiles = model.get_remote_files(networks_model)
+
         template_values = {'is_admin': users.is_current_user_admin(),
                            'nick': user.nickname(),
                            'email': user.email(),
@@ -88,6 +91,7 @@ class Index(webapp2.RequestHandler):
                            'logout': users.create_logout_url('/'),
                            'machines': result,
                            'scripts': scripts,
+                           'remotefiles': remotefiles,
                            'networks': networks_model}
         template = jinja_environment.get_template('dashboard.html')
         self.response.out.write(template.render(template_values))
