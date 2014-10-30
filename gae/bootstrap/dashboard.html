@@ -77,12 +77,17 @@
                         </div>
                         <div id="collapse{{loop.index}}" class="panel-collapse collapse">
                             <div class="panel-body">
-                                <form action="/u/execedit" method="POST">
-                                    <p>Name: <input type="text" name="name" value="{{ script.name }}"></p>
-                                    <p>Content: <textarea name="code" cols=100 rows=20>{{ script.code }}</textarea></p>
+                                <form role="form" action="/u/execedit" method="POST">
+                                    <div class="form-group">
+                                        <label for="scriptName">Name</label>
+                                        <input type="text" class="form-control" id="scriptName" name="name" value="{{ script.name }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="scriptContent">Content</label>
+                                        <textarea name="code" class="form-control" cols=100 rows=4>{{ script.code }}</textarea>
+                                    </div>
                                     <input type="hidden" name="key" value="{{ script.key.urlsafe() }}">
-                                    <br>
-                                    <input type="submit" value="Save">
+                                    <button type="submit" class="btn btn-default">Save</button>
                                 </form>
                                 <br>
                              </div>
@@ -99,12 +104,17 @@
                         </div>
                         <div id="collapseCreate" class="panel-collapse collapse">
                             <div class="panel-body">
-                                <form action="/u/execnew" method="POST">
-                                    <p>Name: <input type="text" name="name" size="45" value=""></p>
-                                    <p>Content:<textarea name="code" cols=100 rows=20></textarea></p>
+                                <form role="form"  action="/u/execnew" method="POST">
+                                    <div class="form-group">
+                                        <label for="createScriptName">Name</label>
+                                        <input type="text" class="form-control" id="createScriptName" name="name" size="45" value="">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="createScriptContent">Content</label>
+                                        <textarea name="code" class="form-control" id="createScriptContent" cols=100 rows=20></textarea>
+                                    </div>
                                     <input type="hidden" name="network" size="45" value="{{network.key.urlsafe()}}">
-                                    <br>
-                                    <input type="submit" value="Create">
+                                    <button type="submit" class="btn btn-default">Create</button>
                                 </form>
                             </div>
                         </div>
@@ -125,12 +135,17 @@
                         </div>
                         <div id="rfcollapse{{loop.index}}" class="panel-collapse collapse">
                             <div class="panel-body">
-                                <form action="/t/remoteedit" method="POST">
-                                    <p>Path: <input type="text" name="path" value="{{ remotefile.path }}"></p>
-                                    <p>Content: <textarea name="content" cols=100 rows=20>{{ remotefile.content }}</textarea></p>
+                                <form role="form" action="/t/remoteedit" method="POST">
+                                    <div class="form-group">
+                                        <label for="remoteFilePath">Path</label>
+                                        <input type="text" class="form-control" id="remoteFilePath" name="path" value="{{ remotefile.path }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="remoteFileContent">Content</label>
+                                        <textarea name="content" class="form-control" id="remoteFileContent" cols=100 rows=4>{{ remotefile.content }}</textarea>
+                                    </div>
                                     <input type="hidden" name="key" value="{{ remotefile.key.urlsafe() }}">
-                                    <br>
-                                    <input type="submit" value="Save">
+                                    <button type="submit" class="btn btn-default">Save</button>
                                 </form>
                                 <br>
                              </div>
@@ -147,12 +162,17 @@
                         </div>
                         <div id="rfcollapseCreate" class="panel-collapse collapse">
                             <div class="panel-body">
-                                <form action="/t/remotenew" method="POST">
-                                    <p>Path: <input type="text" name="path" size="45" value=""></p>
-                                    <p>Content:<textarea name="content" cols=100 rows=20></textarea></p>
+                                <form role="form" action="/t/remotenew" method="POST">
+                                    <div class="form-group">
+                                        <label for="remoteCreatePath">Path</label>
+                                        <input type="text" class="form-control" id="remoteCreatePath" name="path" size="45" value="">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="remoteCreateContent">Content</label>
+                                        <textarea name="content" class="form-control" id="remoteCreateContent" cols=100 rows=20></textarea>
+                                     </div>
                                     <input type="hidden" name="network" size="45" value="{{network.key.urlsafe()}}">
-                                    <br>
-                                    <input type="submit" value="Create">
+                                    <button type="submit" class="btn btn-default">Create</button>
                                 </form>
                             </div>
                         </div>
