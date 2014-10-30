@@ -3,18 +3,19 @@ from google.appengine.ext import ndb
 import netaddr
 
 
-def get_exec_scripts(networks):
+def _get_entities(entity, networks):
     result = {}
     for network in networks:
-        result[network.key] = [x for x in ExecScript.query(ExecScript.network == network.key)]
+        result[network.key] = [x for x in entity.query(entity.network == network.key)]
     return result
+
+
+def get_exec_scripts(networks):
+    return _get_entities(ExecScript, networks)
 
 
 def get_remote_files(networks):
-    result = {}
-    for network in networks:
-        result[network.key] = [x for x in RemoteFile.query(RemoteFile.network == network.key)]
-    return result
+    return _get_entities(RemoteFile, networks)
 
 
 def get_default_files(addr):  # TODO cache
