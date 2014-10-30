@@ -107,11 +107,11 @@
                                 <form role="form"  action="/u/execnew" method="POST">
                                     <div class="form-group">
                                         <label for="createScriptName">Name</label>
-                                        <input type="text" class="form-control" id="createScriptName" name="name" size="45" value="">
+                                        <input type="text" class="form-control" id="createScriptName" name="name" size="45" placeholder="Script name">
                                     </div>
                                     <div class="form-group">
                                         <label for="createScriptContent">Content</label>
-                                        <textarea name="code" class="form-control" id="createScriptContent" cols=100 rows=20></textarea>
+                                        <textarea name="code" class="form-control" id="createScriptContent" cols=100 rows=20 placeholder="Script content here..."></textarea>
                                     </div>
                                     <input type="hidden" name="network" size="45" value="{{network.key.urlsafe()}}">
                                     <button type="submit" class="btn btn-default">Create</button>
@@ -165,11 +165,11 @@
                                 <form role="form" action="/t/remotenew" method="POST">
                                     <div class="form-group">
                                         <label for="remoteCreatePath">Path</label>
-                                        <input type="text" class="form-control" id="remoteCreatePath" name="path" size="45" value="">
+                                        <input type="text" class="form-control" id="remoteCreatePath" name="path" size="45" placeholder="File path">
                                     </div>
                                     <div class="form-group">
                                         <label for="remoteCreateContent">Content</label>
-                                        <textarea name="content" class="form-control" id="remoteCreateContent" cols=100 rows=20></textarea>
+                                        <textarea name="content" class="form-control" id="remoteCreateContent" cols=100 rows=20 placeholder="Write text here..."></textarea>
                                      </div>
                                     <input type="hidden" name="network" size="45" value="{{network.key.urlsafe()}}">
                                     <button type="submit" class="btn btn-default">Create</button>
