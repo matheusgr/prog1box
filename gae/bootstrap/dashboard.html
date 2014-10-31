@@ -11,7 +11,7 @@
 <li><a href="{{logout}}">Logout</a></li>
 {% endblock %}
 {% block container %}
-<div class="container-fluid">
+<div>
     <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
             <div class="navbar-example">
@@ -27,13 +27,11 @@
             <h1 class="page-header">
                 <div id="overview">Overview</div>
             </h1>
-            <div class="row">
-                <p>Welcome {{ nick }}.</p>
-                <ul>
-                    <li>{{total_users_machines}} machine(s) contacted in the last 3 minutes.
-                    <li>{{networks|length}} networks being managed by this user.
-                </ul>
-            </div>
+            <p>Welcome {{ nick }}.</p>
+            <ul>
+                <li>{{total_users_machines}} machine(s) contacted in the last 3 minutes.
+                <li>{{networks|length}} networks being managed by this user.
+            </ul>
             {% for network in networks %}
             <h2 class="sub-header">
                 <div id="{{network.name|replace(' ', '_')}}">{{network.name}}</a>
