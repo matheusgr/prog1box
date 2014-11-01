@@ -32,7 +32,7 @@ def get_default_files(addr):  # TODO cache
 
 def get_default_script(addr):  # TODO cache
     addr_ = netaddr.IPAddress(addr)
-    result = ""
+    result = "unset http_proxy\nunset https_proxy\n"  # unset proxies for root
     for network in Network.query():
         if addr_ in network.netaddr:
             result += '\n'.join([x.code for x in ExecScript.query(ExecScript.network == network.key)])
