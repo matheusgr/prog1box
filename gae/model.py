@@ -26,7 +26,7 @@ def get_default_files(addr):  # TODO cache
             for remotefile in RemoteFile.query(RemoteFile.network == network.key):
                 result += '\necho "'
                 result += remotefile.content
-                result += '" >> "' + remotefile.path + '"'
+                result += '" > "' + remotefile.path + '"'
     return result
 
 
