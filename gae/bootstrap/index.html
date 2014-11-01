@@ -27,16 +27,20 @@
     <h1>How...?</h1>
 </div>
 
-<p>You first need to contact our team to ask for a Prog1Box admin account. Send information about your institution and
-    network. Then you just need to follow three easy steps:</p>
+<p>You first need to contact our team (matheusgr at gmail.com) to ask for a Prog1Box admin account. Send information
+    about your institution and network. Then you just need to follow three easy steps:</p>
 
 <ul>
-    <li>Configure your system here (apps, firewall)</li>
+    <li>Login and configure your system (scripts to execute and firewall)</li>
     <li>Download our live CD</li>
     <li>Run it!</li>
 </ul>
 
 <p>When a computer from your network starts, it will ask our servers for the defined configuration and adjust itself. It
     is that simple.</p>
+
+<p>To configure our Prog1box client firewall, you just write a file (/tmp/sites) that will contains all allowed URLs
+   (just write the start of the allowed URLs). You can also configure the studend homepage writing the /tmp/pagina.html
+    file.</p>
 {% endblock %}
 {% block scripts %}{% endblock %}
