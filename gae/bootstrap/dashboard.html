@@ -83,6 +83,7 @@
                                         <label for="scriptContent">Content</label>
                                         <textarea name="code" class="form-control" cols=100 rows=4>{{ script.code }}</textarea>
                                     </div>
+                                    <input type="hidden" name="network" size="45" value="{{network.key.urlsafe()}}">
                                     <input type="hidden" name="key" value="{{ script.key.urlsafe() }}">
                                     <button type="submit" class="btn btn-default">Save</button>
                                 </form>
@@ -141,6 +142,7 @@
                                         <label for="remoteFileContent">Content</label>
                                         <textarea name="content" class="form-control" id="remoteFileContent" cols=100 rows=4>{{ remotefile.content }}</textarea>
                                     </div>
+                                    <input type="hidden" name="network" size="45" value="{{network.key.urlsafe()}}">
                                     <input type="hidden" name="key" value="{{ remotefile.key.urlsafe() }}">
                                     <button type="submit" class="btn btn-default">Save</button>
                                 </form>
