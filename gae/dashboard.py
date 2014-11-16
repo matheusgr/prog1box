@@ -1,42 +1,24 @@
 import webapp2
-from google.appengine.ext import ndb
 
-from utils import deny_access
-from model import ExecScript, invalidate_cache
+import entity_controller
+from model import ExecScript
 
 DEBUG = False
 
 
-class DashboardExecNew(webapp2.RequestHandler):
-    def post(self):
-        if deny_access(self.response):
-            return
-        code = '\n'.join(self.request.get('code').splitlines())
-        name = self.request.get('name')
-        network_key_req = self.request.get('network')
-        network_key = ndb.Key(urlsafe=network_key_req)
-        if not deny_access(self.response, network_key):
-            ExecScript(code=code, name=name, network=network_key).put()
-            invalidate_cache(network_key_req, ExecScript)
-            self.redirect('/')  # TODO AJAX
-        else:
-            self.response.set_status(403)
+def _create_script_attributes(self):
+    return {"code": '\n'.join(self.request.get('code').splitlines()),
+            "name": self.request.get('name')}
 
 
-class DashboardExecEdit(webapp2.RequestHandler):
-    def post(self):
-        if deny_access(self.response):
-            return
-        name = self.request.get('name')
-        code = '\n'.join(self.request.get('code').splitlines())
-        key = self.request.get('key')
-        network_key = self.request.get('network')
-        script = ndb.Key(urlsafe=key).get()
-        script.name = name
-        script.code = code
-        script.put()
-        invalidate_cache(network_key, ExecScript)
-        self.redirect('/')  # TODO AJAX
+class DashboardExecNew(entity_controller.NewEntityController):
+    entity = ExecScript
+    create_attributes = _create_script_attributes
+
+
+class DashboardExecEdit(entity_controller.EditEntityController):
+    entity = ExecScript
+    create_attributes = _create_script_attributes
 
 
 app = webapp2.WSGIApplication([
