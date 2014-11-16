@@ -2,7 +2,7 @@ import webapp2
 from google.appengine.ext import ndb
 from google.appengine.ext.webapp import template
 
-from model import AllowedUser, Network
+from model import AllowedUser, Network, flush_cache
 
 
 DEBUG = False
@@ -41,6 +41,7 @@ class AdminNetworkNew(webapp2.RequestHandler):
         name = self.request.get('name')
         addr = self.request.get('addr')
         Network(name=name, addr=addr).put()
+        flush_cache()
         self.redirect('/admin/user')
 
 
@@ -48,6 +49,7 @@ class AdminNetworkEdit(webapp2.RequestHandler):
     def post(self):
         key = self.request.get('key')
         ndb.Key(urlsafe=key).delete()
+        flush_cache()
         self.redirect('/admin/user')
 
 
