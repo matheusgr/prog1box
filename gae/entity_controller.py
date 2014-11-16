@@ -2,7 +2,7 @@ import webapp2
 from google.appengine.ext import ndb
 
 from utils import deny_access
-from model import invalidate_cache
+from model import invalidate_cache, RemoteFile, ExecScript
 
 
 class NewEntityController(webapp2.RequestHandler):
@@ -44,3 +44,41 @@ class EditEntityController(webapp2.RequestHandler):
             setattr(entity, attribute, value)
         entity.put()
         self.redirect('/')  # TODO AJAX
+
+
+def _create_remote_file_attributes(self):
+    return {"content": '\n'.join(self.request.get('content').splitlines()),
+            "path": self.request.get('path')}
+
+
+def _create_script_attributes(self):
+    return {"code": '\n'.join(self.request.get('code').splitlines()),
+            "name": self.request.get('name')}
+
+
+class RemoteFileNew(NewEntityController):
+    entity = RemoteFile
+    create_attributes = _create_remote_file_attributes
+
+
+class RemoteFileEdit(EditEntityController):
+    entity = RemoteFile
+    create_attributes = _create_remote_file_attributes
+
+
+class DashboardExecNew(NewEntityController):
+    entity = ExecScript
+    create_attributes = _create_script_attributes
+
+
+class DashboardExecEdit(EditEntityController):
+    entity = ExecScript
+    create_attributes = _create_script_attributes
+
+
+app = webapp2.WSGIApplication([
+    ('/u/execedit', DashboardExecEdit),
+    ('/u/execnew', DashboardExecNew),
+    ('/t/remoteedit', RemoteFileEdit),
+    ('/t/remotenew', RemoteFileNew),
+], debug=False)

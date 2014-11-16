@@ -28,11 +28,11 @@ handlers:
 
 - url: '/u/.*'
   login: required
-  script: dashboard.app
+  script: entity_controller.app
 
 - url: '/t/.*'
   login: required
-  script: remotefile.app
+  script: entity_controller.app
 
 - url: .*
   script: main.app
