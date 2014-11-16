@@ -62,17 +62,17 @@
             {% endif %}
             <h3>Scripts</h3>
             <div id="#execscripts">
-                <div class="panel-group" id="accordion">
+                <div class="panel-group" id="accordion{{network.key.urlsafe()}}">
                     {% for script in scripts[network.key]|sort(attribute='name') %}
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{loop.index}}">
+                                <a data-toggle="collapse" data-parent="#accordion{{network.key.urlsafe()}}" href="#collapse_{{network.key.urlsafe()}}_{{loop.index}}">
                                     {{ script.name }}
                                 </a>
                             </h4>
                         </div>
-                        <div id="collapse{{loop.index}}" class="panel-collapse collapse">
+                        <div id="collapse_{{network.key.urlsafe()}}_{{loop.index}}" class="panel-collapse collapse">
                             <div class="panel-body">
                                 <form role="form" action="/u/execedit" method="POST">
                                     <div class="form-group">
@@ -85,7 +85,8 @@
                                     </div>
                                     <input type="hidden" name="network" size="45" value="{{network.key.urlsafe()}}">
                                     <input type="hidden" name="key" value="{{ script.key.urlsafe() }}">
-                                    <button type="submit" class="btn btn-default">Save</button>
+                                    <button name="action" type="submit" class="btn btn-default" value="save">Save</button>
+                                    <button name="action" type="submit" class="btn btn-default" value="delete">Delete</button>
                                 </form>
                                 <br>
                              </div>
@@ -95,12 +96,12 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseCreate">
+                                <a data-toggle="collapse" data-parent="#accordion{{network.key.urlsafe()}}" href="#collapseCreate_{{network.key.urlsafe()}}">
                                     Create new script...
                                 </a>
                             </h4>
                         </div>
-                        <div id="collapseCreate" class="panel-collapse collapse">
+                        <div id="collapseCreate_{{network.key.urlsafe()}}" class="panel-collapse collapse">
                             <div class="panel-body">
                                 <form role="form"  action="/u/execnew" method="POST">
                                     <div class="form-group">
@@ -121,17 +122,17 @@
             </div>
             <h3>Remote Files</h3>
             <div id="#remotefiles">
-                <div class="panel-group" id="rfaccordion">
+                <div class="panel-group" id="rfaccordion{{network.key.urlsafe()}}">
                     {% for remotefile in remotefiles[network.key]|sort(attribute='path') %}
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#rfaccordion" href="#rfcollapse{{loop.index}}">
+                                <a data-toggle="collapse" data-parent="#rfaccordion{{network.key.urlsafe()}}" href="#rfcollapse_{{network.key.urlsafe()}}_{{loop.index}}">
                                     {{ remotefile.path }}
                                 </a>
                             </h4>
                         </div>
-                        <div id="rfcollapse{{loop.index}}" class="panel-collapse collapse">
+                        <div id="rfcollapse_{{network.key.urlsafe()}}_{{loop.index}}" class="panel-collapse collapse">
                             <div class="panel-body">
                                 <form role="form" action="/t/remoteedit" method="POST">
                                     <div class="form-group">
@@ -144,7 +145,8 @@
                                     </div>
                                     <input type="hidden" name="network" size="45" value="{{network.key.urlsafe()}}">
                                     <input type="hidden" name="key" value="{{ remotefile.key.urlsafe() }}">
-                                    <button type="submit" class="btn btn-default">Save</button>
+                                    <button name="action" type="submit" class="btn btn-default" value="save">Save</button>
+                                    <button name="action" type="submit" class="btn btn-default" value="delete">Delete</button>
                                 </form>
                                 <br>
                              </div>
@@ -154,12 +156,12 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#rfaccordion" href="#rfcollapseCreate">
+                                <a data-toggle="collapse" data-parent="#rfaccordion{{network.key.urlsafe()}}" href="#rfcollapseCreate_{{network.key.urlsafe()}}">
                                     Add new file...
                                 </a>
                             </h4>
                         </div>
-                        <div id="rfcollapseCreate" class="panel-collapse collapse">
+                        <div id="rfcollapseCreate_{{network.key.urlsafe()}}" class="panel-collapse collapse">
                             <div class="panel-body">
                                 <form role="form" action="/t/remotenew" method="POST">
                                     <div class="form-group">
