@@ -2,7 +2,7 @@ import webapp2
 from google.appengine.ext import ndb
 from google.appengine.ext.webapp import template
 
-from model import AllowedUser, Network, flush_cache
+from model import AllowedUser, Network, flush_cache, get_remote_files, get_exec_scripts
 
 
 DEBUG = False
@@ -48,6 +48,13 @@ class AdminNetworkNew(webapp2.RequestHandler):
 class AdminNetworkEdit(webapp2.RequestHandler):
     def post(self):
         key = self.request.get('key')
+        network = ndb.Key(urlsafe=key).get()
+        for remotefiles in get_remote_files([network]).values():
+            for remotefile in remotefiles:
+                remotefile.key.delete()
+        for execscripts in get_exec_scripts([network]).values():
+            for execscript in execscripts:
+                execscript.key.delete()
         ndb.Key(urlsafe=key).delete()
         flush_cache()
         self.redirect('/admin/user')
