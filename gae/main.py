@@ -47,7 +47,8 @@ class Index(webapp2.RequestHandler):
         machines = memcache.get('machines') or OrderedDict()
         result = {}
         total_users_machines = 0
-        networks_model = model.get_user_networks(user_email, users.is_current_user_admin())
+        networks_model = sorted(model.get_user_networks(user_email, users.is_current_user_admin()),
+                                key=lambda x: x.name)
 
         for ip, machine in list(machines.items()):
             if machine.last_datetime < datetime.timedelta(minutes=-3) + datetime.datetime.now():
